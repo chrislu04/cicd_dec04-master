@@ -8,6 +8,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     permissions:
+      contents: read
       pages: write
       id-token: write
 
@@ -32,16 +33,10 @@ jobs:
         run: |
           coverage report
 
-      - name: Prepare the webpage
-        run: |
-          mkdir -p sites
-          mv htmlcov sites/
-          mv coverage.xml sites/
-
-      - name: Upload artifacts
-        uses: actions/upload-pages-artifact@v4
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: ./sites
+          path: htmlcov
 
   github-pages:
     needs: deploy
@@ -56,4 +51,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v2
