@@ -32,11 +32,16 @@ jobs:
         run: |
           coverage report
 
+      - name: Prepare docs folder
+        run: |
+          mkdir -p docs
+          cp -r htmlcov/* docs/
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./htmlcov
+          publish_dir: ./docs
           publish_branch: gh-pages
           user_name: 'github-actions[bot]'
           user_email: 'github-actions[bot]@users.noreply.github.com'
