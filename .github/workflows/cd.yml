@@ -1,12 +1,11 @@
-name: CI
+name: CD - Continuous Deployment
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
+    branches: [ main, master ]
 
 jobs:
-  run-tests:
+  deploy:
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -25,30 +24,27 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run basic tests
-        run: pytest -q
-
       - name: Run tests with coverage
         run: |
-          pytest -q \
-            --cov=. \
-            --cov-report=term \
-            --cov-report=xml \
-            --cov-report=html \
+          pytest -q --cov=. --cov-report=term --cov-report=xml --cov-report=html
+
+      - name: Display coverage report
+        run: |
+          coverage report
 
       - name: Prepare the webpage
         run: |
-          mkdir sites
+          mkdir -p sites
           mv htmlcov sites/
           mv coverage.xml sites/
 
-      - name: upload the artifacts
+      - name: Upload artifacts
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./sites
 
-  Deploy:
-    needs: run-tests
+  github-pages:
+    needs: deploy
     runs-on: ubuntu-latest
     environment:
       name: github-pages
